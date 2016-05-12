@@ -66,22 +66,41 @@ Example: ::
         - l2
      type: enum
 
+Additionally, the ``jump`` variable can be used to transform your numeric
+variables into an ``enum`` for finer control.
+
+Example: ::
+
+  search_space:
+    tica__lag_time:
+      min: 2
+      max: 10
+      step: 2
+      type: jump
+      var_type: int
 
 .. _strategy:
 
 Strategy
 --------
 
-Three probablistic search strategies are supported. First, random search
-(``strategy: {name: random}``) can be used, which samples hyperparameters randomly
+One deterministic and three probabilistic search strategies are supported in
+Osprey. The first of these strategies is grid search, which, as its name
+implies, treats the entire search space as a grid and performs a brute force
+search over the entire space. Example: ::
+
+strategy:
+  name: grid
+
+Random search (``strategy: {name: random}``) can be used, which samples hyperparameters randomly
 from the search space at each model-building iteration. Random search has
-`been shown to be <http://www.jmlr.org/papers/volume13/bergstra12a/bergstra12a.pdf>`_ significantly more effiicent than pure grid search. Example: ::
+`been shown to be <http://www.jmlr.org/papers/volume13/bergstra12a/bergstra12a.pdf>`_ significantly more efficient than pure grid search. Example: ::
 
   strategy:
     name: random
 
 ``strategy: {name: hyperopt_tpe}`` is an alternative strategy which uses a Tree of Parzen
-estimators, described in `this paper <http://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization>`_. This algorithim requires that the external
+estimator, described in `this paper <http://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization>`_. This algorithm requires that the external
 package `hyperopt <https://github.com/hyperopt/hyperopt>`_ be installed. Example: ::
 
   strategy:
@@ -110,7 +129,7 @@ Example: ::
 
 .. _cross_validation:
 
-Cross Validation
+Cross-Validation
 ----------------
 
 Many types of cross-validation iterators are supported. The simplest
@@ -127,7 +146,8 @@ To access the other iterators, use the ``name`` and ``params`` keywords: ::
       n_iter: 5
       test_size: 0.5
 
-Here's a complete list of supported iterators, along with their ``name`` mappings:
+Here's a complete list of supported cross-validation strategies, along with
+their ``name`` mappings:
 
 * ``kfold``: `KFold <http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.KFold.html#sklearn.cross_validation.KFold>`_
 * ``shufflesplit``: `ShuffleSplit <http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.ShuffleSplit.html#sklearn.cross_validation.ShuffleSplit>`_

@@ -23,13 +23,18 @@ Release Version
 ---------------
 
 Currently, **we recommend that you use the development version**, since things are
-moving fast. However, release versions from PyPI can be installed using ``pip``.
+moving fast. However, release versions from PyPI or Anaconda can be installed
+using ``pip`` or ``conda``, respectively:
 
 .. code-block:: bash
 
   # grab the release version from PyPI
   $ pip install osprey
 
+.. code-block:: bash
+
+  # grab the release version from Anaconda
+  $ conda install -c omnia osprey
 
 Dependencies
 ------------

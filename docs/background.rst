@@ -15,7 +15,7 @@ factors here are
   - tension between exploration of parameter space and local optimization (explore / exploit dilemma)
 
 A good, if somewhat dated overview of this problem setting can be found in
-Jones, Schonlau, Welch (1998) [#f1]_. The key idea is that we can procede by
+Jones, Schonlau, Welch (1998) [#f1]_. The key idea is that we can proceed by
 fitting a **surrogate function** or **response surface**. This surrogate function needs to provide both our best guess of the function as well as our
 degree of belief -- our uncertainty in the parts of parameter space that we
 haven't yet explored. Does the maxima lie over there? Then at each iteration,
