@@ -32,7 +32,7 @@ test:
   requires:
     - nose
     - nose-timer
-    - gpy
+    - gpflow
     - msmbuilder
     - mdtraj
     - coverage

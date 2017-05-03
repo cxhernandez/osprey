@@ -14,14 +14,13 @@ except ImportError:
     pass
 
 try:
-    from GPy import kern
-    from GPy.kern import RBF, Fixed, Bias
-    from GPy.util.linalg import tdot
-    from GPy.models import GPRegression
+    from GPflow import kernels as kern
+    from GPflow.kernels import RBF, White, Constant
+    from GPflow.gpr import GPR
     from scipy.optimize import minimize
 except:
     # GPy is optional, but required for gp
-    GPRegression = kern = minimize = None
+    GPR = kern = minimize = None
     pass
 from .search_space import EnumVariable
 
@@ -206,20 +205,15 @@ class GP(BaseStrategy):
         self.model = None
         self.n_dims = None
         self.kernel = None
-        self._kerns = None
-        self._kernf = None
-        self._kernb = None
 
     def _create_kernel(self, V):
-        self._kerns = [RBF(1, ARD=True, active_dims=[i])
-                       for i in range(self.n_dims)]
-        self._kernf = Fixed(self.n_dims, tdot(V))
-        self._kernb = Bias(self.n_dims)
-        self.kernel = np.sum(self._kerns) + self._kernf + self._kernb
+        self.kernel = RBF(self.n_dims, ARD=True)
+        self.kernel += White(self.n_dims)
+        self.kernel += Constant(self.n_dims)
 
     def _fit_model(self, X, Y):
-        model = GPRegression(X, Y, self.kernel)
-        model.optimize(messages=False, max_f_eval=self.max_feval)
+        model = GPR(X, Y, self.kernel)
+        model.optimize()
         self.model = model
 
     def _get_random_point(self):
@@ -232,8 +226,7 @@ class GP(BaseStrategy):
 
         def z(x):
             y = x.copy().reshape(-1, self.n_dims)
-            s, v = self.model.predict(y, kern=(np.sum(self._kerns).copy() +
-                                               self._kernb.copy()))
+            s, v = self.model.predict_f(y)
             return -(s+v).flatten()
 
         return minimize(z, init, bounds=self.n_dims*[(0., 1.)],
@@ -285,8 +278,8 @@ class GP(BaseStrategy):
         return False
 
     def suggest(self, history, searchspace, max_tries=5):
-        if not GPRegression:
-            raise ImportError('No module named GPy')
+        if not GPR:
+            raise ImportError('No module named GPflow')
         if not minimize:
             raise ImportError('No module named SciPy')
 
