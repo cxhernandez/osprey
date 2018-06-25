@@ -8,7 +8,7 @@ import importlib
 from sklearn.base import BaseEstimator
 
 
-__all__ = ['msmbuilder', 'import_all_estimators']
+__all__ = ['msmbuilder', 'torch', 'import_all_estimators']
 
 
 def msmbuilder():
@@ -18,6 +18,20 @@ def msmbuilder():
         from sklearn.pipeline import Pipeline
 
     scope = import_all_estimators(msmbuilder)
+    scope['Pipeline'] = Pipeline
+    return scope
+
+
+def torch():
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        import torch
+        from torch import nn
+        import skorch
+        from sklearn.pipeline import Pipeline
+
+    scope = import_all_estimators(skorch)
+    scope.update({'nn': nn})
     scope['Pipeline'] = Pipeline
     return scope
 

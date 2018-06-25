@@ -1,0 +1,38 @@
+estimator:
+        eval: Pipeline([
+                ('scale', RobustScaler()),
+                ('classifier', NeuralNetClassifier(nn.Sequential(nn.Linear(64, 32),
+                                                                 nn.ReLU(),
+                                                                 nn.Linear(32, 10),
+                                                                 nn.Softmax(dim=1)),
+                                                   max_epochs=10)), 
+              ])
+        eval_scope: ['sklearn', 'torch']
+
+scoring: accuracy
+
+strategy:
+  name: gp
+  params:
+    seeds: 5
+
+search_space:
+  classifier__lr:
+      min: 1e-3
+      max: 1e-1
+      num: 10
+      type: jump
+      var_type: float
+      warp: log
+
+cv: 5
+
+dataset_loader:
+  name: sklearn_dataset
+  params:
+    method: load_digits
+
+trials:
+    uri: sqlite:///osprey-trials.db
+
+random_seed: 42
