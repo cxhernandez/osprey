@@ -15,6 +15,13 @@ try:
 except:
     HAVE_MSMBUILDER = False
 
+try:
+    __import__('skorch')
+    HAVE_SKORCH = True
+except:
+    HAVE_SKORCH = False
+
+
 OSPREY_BIN = find_executable('osprey')
 
 
@@ -121,6 +128,30 @@ def test_gp_example():
     try:
         os.chdir(dirname)
         subprocess.check_call([OSPREY_BIN, 'skeleton', '-t', 'gp_example',
+                              '-f', 'config.yaml'])
+        subprocess.check_call([OSPREY_BIN, 'worker', 'config.yaml', '-n', '1'])
+        assert os.path.exists('osprey-trials.db')
+
+        subprocess.check_call([OSPREY_BIN, 'current_best', 'config.yaml'])
+
+        yield _test_dump_1
+
+        yield _test_plot_1
+
+    finally:
+        os.chdir(cwd)
+        shutil.rmtree(dirname)
+
+
+@skipif(not HAVE_SKORCH, 'this test requires Skorch')
+def test_torch_example():
+    assert OSPREY_BIN is not None
+    cwd = os.path.abspath(os.curdir)
+    dirname = tempfile.mkdtemp()
+
+    try:
+        os.chdir(dirname)
+        subprocess.check_call([OSPREY_BIN, 'skeleton', '-t', 'torch',
                               '-f', 'config.yaml'])
         subprocess.check_call([OSPREY_BIN, 'worker', 'config.yaml', '-n', '1'])
         assert os.path.exists('osprey-trials.db')

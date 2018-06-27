@@ -33,6 +33,7 @@ test:
     - nose
     - nose-timer
     - gpy
+    - skorch
     - msmbuilder
     - msmb_data
     - mdtraj
