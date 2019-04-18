@@ -18,7 +18,7 @@ install:
     - conda install -yq python-coveralls
 
 script:
-    - if [ $CONDA_PY == 3.6 ]; then conda build --quiet devtools/conda-recipe; fi
+    - conda build --quiet devtools/conda-recipe
     - devtools/travis-ci/build_docs.sh
 
 after_success:
