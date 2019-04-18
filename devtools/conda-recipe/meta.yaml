@@ -34,7 +34,7 @@ test:
     - nose-timer
     - gpy
     - skorch
-    - torch
+    - pytorch
     - msmbuilder
     - msmb_data
     - mdtraj
