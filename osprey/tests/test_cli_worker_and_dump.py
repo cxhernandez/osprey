@@ -8,6 +8,8 @@ import subprocess
 import tempfile
 from distutils.spawn import find_executable
 from numpy.testing.decorators import skipif
+from nose.plugins.skip import SkipTest
+
 
 try:
     __import__('msmbuilder.example_datasets')
@@ -25,9 +27,13 @@ except:
 OSPREY_BIN = find_executable('osprey')
 
 
-@skipif(not HAVE_MSMBUILDER, 'this test requires MSMBuilder')
+# @skipif(not HAVE_MSMBUILDER, 'this test requires MSMBuilder')
 def test_msmbuilder_skeleton():
-    from msmbuilder.example_datasets import FsPeptide
+    try:
+        from msmbuilder.example_datasets import FsPeptide
+    except ImportError as e:
+        raise SkipTest(e)
+
     assert OSPREY_BIN is not None
     cwd = os.path.abspath(os.curdir)
     dirname = tempfile.mkdtemp()
@@ -49,9 +55,13 @@ def test_msmbuilder_skeleton():
         shutil.rmtree(dirname)
 
 
-@skipif(not HAVE_MSMBUILDER, 'this test requires MSMBuilder')
+# @skipif(not HAVE_MSMBUILDER, 'this test requires MSMBuilder')
 def test_msmb_feat_select_skeleton():
-    from msmbuilder.example_datasets import FsPeptide
+    try:
+        from msmbuilder.example_datasets import FsPeptide
+    except ImportError as e:
+        raise SkipTest(e)
+
     assert OSPREY_BIN is not None
     cwd = os.path.abspath(os.curdir)
     dirname = tempfile.mkdtemp()
@@ -132,8 +142,8 @@ def test_gp_example():
 
     try:
         os.chdir(dirname)
-        subprocess.check_call(
-            [OSPREY_BIN, 'skeleton', '-t', 'gp_example', '-f', 'config.yaml'])
+        subprocess.check_call([OSPREY_BIN, 'skeleton', '-t', 'bayes_example',
+                              '-f', 'config.yaml'])
         subprocess.check_call([OSPREY_BIN, 'worker', 'config.yaml', '-n', '1'])
         assert os.path.exists('osprey-trials.db')
 
